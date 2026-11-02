@@ -1,0 +1,47 @@
+AI Lab 1: Introduction to AI & Paradigms | Mohammed Emad ALaini
+Python 3.11.6, standard library only
+
+========================================================================
+LAB 1 / Section 1.5  lab1_compare.py  (supplied script output)
+========================================================================
+case | symbolic | threshold | disagreement
+complete_high | Review | Review | False
+complete_low | Hold | Review | True
+incomplete_high | Hold | Review | True
+boundary | Review | Review | False
+
+Disagreement table with the deciding condition for each branch:
+case | symbolic | threshold | disagreement | symbolic reason | threshold reason
+complete_high | Review | Review | False | complete and score 82 >= 70 | p=0.81 >= 0.70
+complete_low | Hold | Review | True | score 68 < 70 | p=0.74 >= 0.70
+incomplete_high | Hold | Review | True | documents incomplete | p=0.88 >= 0.70
+boundary | Review | Review | False | complete and score 70 >= 70 | p=0.70 >= 0.70
+
+Section 1.6  isolate the two boundaries (changed separately):
+variant | score | complete | p | symbolic | threshold | disagreement | symbolic reason | threshold reason
+boundary (original) | 70 | True | 0.70 | Review | Review | False | complete and score 70 >= 70 | p=0.70 >= 0.70
+boundary score=69 | 69 | True | 0.70 | Hold | Review | True | score 69 < 70 | p=0.70 >= 0.70
+boundary p=0.69 | 70 | True | 0.69 | Review | Hold | True | complete and score 70 >= 70 | p=0.69 < 0.70
+
+========================================================================
+LAB 1 / Task 2  lab1_rules.py  (extended rule-based checker)
+========================================================================
+Thresholds are synthetic lab assumptions: score >= 70, attendance >= 75%, credit hours >= 12, documents complete.
+case | input (score, complete, attendance, credits) | expected | actual | match | reason
+T1_pass | (82, True, 90%, 15) | Review | Review | PASS | all 4 conditions met (documents complete; score 82 >= 70; attendance 90% >= 75%; credit hours 15 >= 12)
+T2_attendance_fails | (85, True, 60%, 15) | Hold | Hold | PASS | failed attendance_ok: attendance 60% < 75%
+T3_credit_load_fails | (88, True, 92%, 9) | Hold | Hold | PASS | failed credit_load_ok: credit hours 9 < 12
+T4_score_boundary | (70, True, 80%, 15) | Review | Review | PASS | all 4 conditions met (documents complete; score 70 >= 70; attendance 80% >= 75%; credit hours 15 >= 12)
+Result: 4/4 cases matched the expected decision.
+
+Why each case was selected:
+  T1_pass: control case: every condition comfortably satisfied
+  T2_attendance_fails: isolates new condition C3: only attendance is below its threshold
+  T3_credit_load_fails: isolates new condition C4: only credit hours are below the threshold
+  T4_score_boundary: threshold boundary: score exactly 70 must pass because the rule uses >=
+
+Original 2-condition rule on the same inputs (shows what the new conditions change):
+  T1_pass: original_rule -> Review, extended -> Review
+  T2_attendance_fails: original_rule -> Review, extended -> Hold
+  T3_credit_load_fails: original_rule -> Review, extended -> Hold
+  T4_score_boundary: original_rule -> Review, extended -> Review
